@@ -10,6 +10,8 @@ orbs:
   # Upload artifacts to s3
   aws-s3: circleci/aws-s3@2.0.0
   codecov: codecov/codecov@3.2.2
+  # Allow for waiting until docker images are ready
+  wait-for: cobli/wait-for@0.0.2
 
 # adapted from https://circleci.com/developer/orbs/orb/storytel/nugetpublish#commands-packandpublish
 commands:
@@ -222,6 +224,69 @@ jobs: # Each project will have individual jobs for each specific task it has to 
           paths:
             - speckle-sharp-ci-tools/Installers
 
+  build-connector-mac:
+    docker:
+      - image: mono:latest
+    parameters:
+      slnname:
+        type: string
+      dllname:
+        type: string
+      slug:
+        type: string
+        default: ''
+      installer:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin
+            apt-get update
+            apt-get install -y zip
+      - run: 
+          name: Restore << parameters.slnname >>
+          command: nuget restore << parameters.slnname >>/<< parameters.slnname >>.sln
+      - run:
+          name: Build << parameters.slnname >>
+          command: msbuild << parameters.slnname >>/<< parameters.slnname >>.sln /p:Configuration=Release /p:WarningLevel=0 /p:IsDesktopBuild=false
+      - run:
+          name: Deploy?
+          command: echo "Should we deploy this?"
+      # Compress build files
+      - run:
+          name: Zip Kit files
+          command: |
+            cd Objects/Converters/ConverterRhinoGh/bin/Release/netstandard2.0/
+            zip -r Objects.zip Objects.dll Objects.Converter.Rhino.dll
+      - run:
+          name: Zip Connector files
+          command: |
+            cd << parameters.slnname >>/<< parameters.slnname >>/bin/
+            zip -r SpeckleGH.zip ./
+      # Create installer
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Copy files to installer
+          command: |
+            mkdir speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles/
+            cp Objects/Converters/ConverterRhinoGh/bin/Release/netstandard2.0/Objects.zip speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles
+            cp << parameters.slnname >>/<< parameters.slnname >>/bin/SpeckleGH.zip speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles
+      - run:
+          name: Build Mac installer
+          command: /root/.dotnet/dotnet publish speckle-sharp-ci-tools/Mac/SpeckleGHInstall/SpeckleGHInstall.sln -r osx-x64 -c Release /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:PublishSingleFile=true /p:PublishTrimmed=true
+      - run:
+          name: Zip installer
+          command: |
+            cd speckle-sharp-ci-tools/Mac/SpeckleGHInstall/bin/Release/netcoreapp3.1/osx-x64/publish
+            zip -r grasshopper-mac.zip ./
+      - store_artifacts:
+          path: speckle-sharp-ci-tools/Mac/SpeckleGHInstall/bin/Release/netcoreapp3.1/osx-x64/publish/grasshopper-mac.zip
+
+
   get-ci-tools: # Clones our ci tools and persists them to the workspace
     docker:
       - image: cimg/base:2021.01
@@ -282,10 +347,17 @@ workflows:
   connector_grasshopper:
     when: << pipeline.parameters.run_connector_gh >>
     jobs:
+      - get-ci-tools
       - build-connector:
           name: build-connector-grasshopper
           slnname: ConnectorGrasshopper
-          dllname: SpeckleConnectorGrasshopper.gha 
+          dllname: SpeckleConnectorGrasshopper.gha
+      - build-connector-mac:
+          name: build-connector-grasshopper-mac
+          slnname: ConnectorGrasshopper
+          dllname: SpeckleConnectorGrasshopper.gha
+          requires:
+            - get-ci-tools
   
   # Rhino connector - Build/Test
   connector_rhino:
