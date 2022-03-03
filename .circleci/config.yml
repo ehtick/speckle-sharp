@@ -277,7 +277,7 @@ jobs: # Each project will have individual jobs for each specific task it has to 
             cp << parameters.slnname >>/<< parameters.slnname >>/bin/SpeckleGH.zip speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles
       - run:
           name: Build Mac installer
-          command: /root/.dotnet/dotnet publish speckle-sharp-ci-tools/Mac/SpeckleGHInstall/SpeckleGHInstall.sln -r osx-x64 -c Release /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:PublishSingleFile=true /p:PublishTrimmed=true
+          command: /root/.dotnet/dotnet publish speckle-sharp-ci-tools/Mac/SpeckleGHInstall/SpeckleGHInstall.sln -r osx-x64 -c Release /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:PublishSingleFile=true /p:PublishReadyToRun=false
       - run:
           name: Zip installer
           command: |
