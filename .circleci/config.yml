@@ -259,7 +259,7 @@ jobs: # Each project will have individual jobs for each specific task it has to 
       - run:
           name: Zip Kit files
           command: |
-            cd Objects/Converters/ConverterRhinoGh/bin/Release/netstandard2.0/
+            cd Objects/Converters/ConverterRhinoGh/ConvedrterRhino6/bin/Release/netstandard2.0/
             zip -r Objects.zip Objects.dll Objects.Converter.Rhino6.dll
       - run:
           name: Zip Connector files
@@ -273,7 +273,7 @@ jobs: # Each project will have individual jobs for each specific task it has to 
           name: Copy files to installer
           command: |
             mkdir speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles/
-            cp Objects/Converters/ConverterRhinoGh/bin/Release/netstandard2.0/Objects.zip speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles
+            cp Objects/Converters/ConverterRhinoGh/ConverterRhino6/bin/Release/netstandard2.0/Objects.zip speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles
             cp << parameters.slnname >>/<< parameters.slnname >>/bin/SpeckleGH.zip speckle-sharp-ci-tools/Mac/SpeckleGHInstall/.installationFiles
       - run:
           name: Build Mac installer
