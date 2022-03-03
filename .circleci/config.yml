@@ -89,8 +89,7 @@ jobs: # Each project will have individual jobs for each specific task it has to 
             {"regex": "ConnectorAutocadCivil/.*", "param_name": "run_connector_autocadcivil"},
             {"regex": "ConnectorETABS/.*", "param_name": "run_connector_etabs"},
             {"regex": "ConnectorMicroStation/.*", "param_name": "run_connector_microstation"},
-            {"regex": "ConnectorTeklaStructures/.*", "param_name": "run_connector_teklastructures"}
-          ]'
+            {"regex": "ConnectorTeklaStructures/.*", "param_name": "run_connector_teklastructures"}]'
           base-branch: 'main'
   
   build-core:
