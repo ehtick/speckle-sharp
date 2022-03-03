@@ -260,7 +260,7 @@ jobs: # Each project will have individual jobs for each specific task it has to 
           name: Zip Kit files
           command: |
             cd Objects/Converters/ConverterRhinoGh/bin/Release/netstandard2.0/
-            zip -r Objects.zip Objects.dll Objects.Converter.Rhino.dll
+            zip -r Objects.zip Objects.dll Objects.Converter.Rhino6.dll
       - run:
           name: Zip Connector files
           command: |
