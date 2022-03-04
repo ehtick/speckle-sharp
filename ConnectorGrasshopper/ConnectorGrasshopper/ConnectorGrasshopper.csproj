@@ -288,5 +288,8 @@
   <PropertyGroup Condition="$([MSBuild]::IsOsPlatform('OSX'))">
     <PostBuildEvent>cp "$(TargetPath)" "$(TargetDir)$(TargetName).gha"</PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOsPlatform('Linux'))">
+    <PostBuildEvent>cp "$(TargetPath)" "$(TargetDir)$(TargetName).gha"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
 
