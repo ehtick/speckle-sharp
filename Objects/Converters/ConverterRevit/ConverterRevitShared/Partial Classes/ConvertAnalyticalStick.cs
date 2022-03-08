@@ -30,7 +30,7 @@ switch (speckleStick.type)
       case ElementType1D.Beam:
         RevitBeam revitBeam = new RevitBeam();
         //This only works for CSIC sections now for sure. Need to test on other sections
-        revitBeam.type = speckleStick.property.name.Replace('X','x');
+        revitBeam.profile.name = speckleStick.property.name.Replace('X','x');
         revitBeam.baseLine = speckleStick.baseLine;
         //Beam beam = new Beam(speckleStick.baseLine);
         placeholders = BeamToNative(revitBeam);
@@ -44,7 +44,7 @@ switch (speckleStick.type)
           return placeholders;
       case ElementType1D.Brace:
         RevitBrace revitBrace = new RevitBrace();
-        revitBrace.type = speckleStick.property.name.Replace('X', 'x');
+        revitBrace.profile.name = speckleStick.property.name.Replace('X', 'x');
         revitBrace.baseLine = speckleStick.baseLine;
           //Brace brace = new Brace(speckleStick.baseLine);
           placeholders = BraceToNative(revitBrace);
@@ -57,7 +57,7 @@ switch (speckleStick.type)
           return placeholders;
       case ElementType1D.Column:
         RevitColumn revitColumn = new RevitColumn();
-        revitColumn.type = speckleStick.property.name.Replace('X', 'x');
+        revitColumn.profile.name = speckleStick.property.name.Replace('X', 'x');
         revitColumn.baseLine = speckleStick.baseLine;
           placeholders = ColumnToNative(revitColumn);
           DB.FamilyInstance nativeRevitColumn = (DB.FamilyInstance)placeholders[0].NativeObject;
